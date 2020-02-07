@@ -1,0 +1,17 @@
+@startuml
+
+box #DDDDDD
+Client -> SingletonVault : singleton()
+SingletonVault -> StaticSingletonManager : create()
+Client -> Singleton : <<create>>
+Singleton -> SingletonVault : singleton()
+Singleton -> SingletonHolder : singleton()
+SingletonHolder -> StaticSingletonManager : create()
+Singleton -> SingletonHolder : registerSingleton()
+SingletonHolder -> SingletonHolder : initialize
+Singleton -> SingletonVault : registerSingleton()
+SingletonVault -> SingletonVault : add to map
+Client -> SingletonVault : registrationComplete()
+end box
+
+@enduml

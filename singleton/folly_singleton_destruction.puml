@@ -1,0 +1,27 @@
+@startuml
+
+box #DDDDDD
+Client -> SingletonVault : destroyInstances()
+opt vault state is not quiescing
+    loop for each singleton
+        SingletonVault -> SingletonHolder : preDestroyInstance()
+    end
+    loop for each singleton reversely
+        SingletonVault -> SingletonHolder : destroyInstance()
+        opt has destroy baton
+            SingletonHolder -> Baton : try_wait_for()
+            opt last reference released
+                SingletonHolder -> TeardownFunc : operator()()
+            end
+        end
+    end
+    loop for each singleton
+        SingletonVault -> SingletonHolder : hasLiveInstance()
+        opt has live instance
+            SingletonVault -> FatalHelper : add leaked singleton
+        end
+    end
+end
+end box
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+
+box #DDDDDD
+Client -> Singleton : try_get()
+Singleton -> SingletonHolder : singleton()
+Singleton -> SingletonHolder : try_get()
+opt singleton state is not living
+    SingletonHolder -> SingletonHolder : createInstance()
+    SingletonHolder -> CreateFunc : operator()()
+    SingletonHolder -> SingletonVault : scheduleDestroyInstances()
+    SingletonVault -> CRT : atexit()
+end
+SingletonHolder --> Singleton : shared_ptr<T>
+Singleton --> Client : shared_ptr<T>
+end box
+
+@enduml

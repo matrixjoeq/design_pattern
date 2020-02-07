@@ -1,0 +1,67 @@
+@startuml
+
+package folly #DDDDDD
+{
+package detail
+{
+interface SingletonHolderBase
+{
+    +hasLiveInstance() : bool
+    +createInstance() : void
+    +creationStarted() : bool
+    +preDestroyInstance(Deleter&) : void
+    +destroyInstance() : void
+}
+note left of SingletonHolderBase : for vault to keep a list of all holders
+
+class StaticSingletonManager
+{
+    +{static} create<T, Tag>() : T&
+}
+
+class SingletonHolder<T>
+{
+    +{static} singleton<Tag, VaultTag>() : SingletonHolder<T>&
+    +try_get() : shared_ptr<T>
+    +try_get_fast() : ReadMostlySharedPtr<T>
+    +registerSingleton(CreateFunc, TeardownFunc) : void
+    +registerSingletonMock(CreateFunc, TeardownFunc) : void
+}
+note right of SingletonHolder : actual instance of singleton\ntracking the instance itself
+}
+
+class Singleton<T, Tag, VaultTag>
+{
+    +{static} try_get() : shared_ptr<T>
+    +{static} try_get_fast() : ReadMostlySharedPtr<T>
+    +{static} make_mock(CreateFunc, TeardownFunc) : void
+    +Singleton(CreateFunc, TeardownFunc)
+    +shouldEagerInit() : Singleton&
+}
+note right of Singleton : wrapper for users to register\n and instantiate singletons
+
+class SingletonVault
+{
+    +registerSingleton(SingletonHolderBase*) : void
+    +addEagerInitSingleton(SingletonHolderBase*) : void
+    +registrationComplete() : void
+    +doEagerInit() : void
+    +doEagerInitVia(Executor&, Baton*) : void
+    +destroyInstances() : void
+    +reenableInstances() : void
+    +eagerInitComplete() const : bool
+    +{static} singleton<VaultTag>() : SingletonVault*
+    -{static} scheduleDestroyInstances() : void
+    -friend SingletonHolder<T>
+}
+note right of SingletonVault : manage creation and destruction \nof interdependent singletons
+
+Singleton --> SingletonHolder
+SingletonHolder --> StaticSingletonManager
+StaticSingletonManager <-- SingletonVault
+SingletonHolder --|> SingletonHolderBase
+SingletonHolderBase <-- SingletonVault
+
+}
+
+@enduml
