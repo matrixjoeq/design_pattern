@@ -1,0 +1,68 @@
+@startuml
+
+package testing #DDDDDD
+{
+
+interface TestFactoryBase
+{
+    +CreateTest() : Test*
+}
+
+class TestFactoryImpl<TestClass>
+{
+    +{abstract}CreateTest() : Test*
+}
+
+abstract Test
+{
+    -Run() : void
+    -{abstract}TestBody() : void
+}
+
+class TestInfo
+{
+    +test_case_name() const : const char*
+    +name() const : const char*
+    +result() const : const TestResult*
+    -Run() : void
+    -factory_ : const TestFactoryBase*
+}
+
+class TestCase
+{
+    +AddTestInfo(TestInfo*) : void
+    -Run() : void
+    -test_info_list_ : vector<TestInfo*>
+}
+
+class TestClass
+{
+    -TestBody() : void
+    -{static}test_info_ : const TestInfo*
+}
+
+class UnitTest<<Singleton>>
+{
+    +{static}GetInstance() : UnitTest*
+    +Run() : int
+    -impl() : UnitTestImpl*
+}
+
+class UnitTestImpl
+{
+    +AddTestInfo(Test::SetUpTestCaseFunc, Test::TearDownTestCaseFunc, TestInfo*) : void
+    +RunAllTests() : bool
+    -test_cases_ : vector<TestCase*>
+}
+
+TestFactoryBase <|.. TestFactoryImpl
+Test <|-- TestClass
+TestFactoryImpl -> TestClass : create
+TestClass --> UnitTest
+TestClass -> TestInfo : create
+UnitTest --> UnitTestImpl
+UnitTestImpl --> TestCase
+
+}
+
+@enduml

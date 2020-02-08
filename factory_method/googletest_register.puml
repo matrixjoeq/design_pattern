@@ -1,0 +1,14 @@
+@startuml
+
+box #DDDDDD
+TestClass -> TestFactoryImpl : create
+TestClass -> TestInfo : create
+TestClass -> UnitTest : impl()
+TestClass -> UnitTestImpl : AddTestInfo()
+opt test case not found
+    UnitTestImpl -> TestCase : create
+end
+UnitTestImpl -> TestCase : AddTestInfo()
+end box
+
+@enduml

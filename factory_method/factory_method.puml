@@ -1,0 +1,27 @@
+@startuml
+
+package factory_method #DDDDDD
+{
+interface ChairFactory
+{
+    +create() : Owner<Chair>
+}
+
+class ModernChairFactory
+{
+    +create() : Owner<Chair>
+}
+
+interface Chair
+class ModernChair
+
+class Client
+
+Client --> ChairFactory
+Client --> Chair
+ChairFactory <|.. ModernChairFactory
+Chair <|.. ModernChair
+ModernChairFactory -> ModernChair
+}
+
+@enduml

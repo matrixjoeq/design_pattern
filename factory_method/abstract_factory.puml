@@ -1,0 +1,40 @@
+@startuml
+
+package design_pattern #DDDDDD
+{
+interface FurnitureFactory
+{
+    +createChair() : Owner<Chair>
+    +createSofa() : Owner<Sofa>
+}
+
+class ModernFurnitureFactory
+{
+    +createChair() : Owner<Chair>
+    +createSofa() : Owner<Sofa>
+}
+
+interface Chair
+class ModernChair
+class VictorianChair
+
+interface Sofa
+class ModernSofa
+class VictorianSofa
+
+class Client
+
+Client --> Chair
+Client --> FurnitureFactory
+Client --> Sofa
+VictorianChair ..|> Chair
+VictorianSofa ..|> Sofa
+FurnitureFactory <|.. ModernFurnitureFactory
+Chair <|.. ModernChair
+Sofa <|.. ModernSofa
+ModernChair <- ModernFurnitureFactory
+ModernFurnitureFactory -> ModernSofa
+
+}
+
+@enduml

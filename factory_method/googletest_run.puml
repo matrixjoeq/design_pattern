@@ -1,0 +1,17 @@
+@startuml
+
+box #DDDDDD
+Client -> UnitTest : Run()
+UnitTest -> UnitTestImpl : RunAllTests()
+loop for each test case
+    UnitTestImpl -> TestCase : Run()
+    loop for each test
+        TestCase -> TestInfo : Run()
+        TestInfo -> TestFactoryBase : CreateTest()
+        TestFactoryBase -> TestClass : create
+        TestInfo -> Test : Run()
+    end
+end
+end box
+
+@enduml

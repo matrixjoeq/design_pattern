@@ -1,0 +1,11 @@
+@startuml
+
+box #DDDDDD
+Client -> MetaTypeSystem : qRegisterMetaType<T>()
+MetaTypeSystem -> QMetaTypeId : qt_metatype_id()
+QMetaTypeId -> QCustomTypeInfo : create
+QMetaTypeId --> MetaTypeSystem : info
+MetaTypeSystem -> GlobalCustomTypes : append(info)
+end box
+
+@enduml

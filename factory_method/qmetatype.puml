@@ -1,0 +1,59 @@
+@startuml
+
+package Qt #DDDDDD
+{
+
+class QMetaType
+{
+    +typedef void (*Destructor)(void *)
+    +typedef void *(*Constructor)(void *, const void *)
+    +{static}registerType(const char* typeName, ...) : int
+    +{static}registerNormalizedType(QByteArray& normalizedTypeName, ...) : int
+    -m_constructor : Constructor
+    -m_destructor : Destructor
+    -m_size : uint
+    -m_typeFlags : uint
+    -m_typeId : int
+    -m_metaObject : const QMetaObject*
+}
+
+class QMetaTypeId<T>
+{
+    +enum { Defined }
+    +{static}qt_metatype_id() : int
+}
+
+class QMetaTypeInterface
+{
+    +constructor : QMetaType::Constructor
+    +destructor : QMetaType::Destructor
+    +size : int
+    +flags : QMetaType::TypeFlags::Int
+    +metaObject : const QMetaObject*
+}
+
+class QCustomTypeInfo
+{
+    +typeName : QByteArray
+}
+
+class QMetaTypeFunctionHelper<T>
+{
+    +{static}Destruct(T* t) : void
+    +{static}Construc(void* where, const T* t) : void*
+}
+
+class QGlobalStatic<QVector<QCustomTypeInfo>>
+{
+    +operator()() : QVector<QCustomTypeInfo>*
+}
+
+QGlobalStatic -> QCustomTypeInfo
+QCustomTypeInfo --|> QMetaTypeInterface
+QMetaType <- QMetaTypeInterface
+QMetaType --> QMetaTypeId
+QMetaTypeInterface --> QMetaTypeFunctionHelper
+
+}
+
+@enduml
